@@ -1,27 +1,20 @@
+import time
 from django.core.files.base import ContentFile
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.http import HttpResponseNotFound, HttpResponse
 from .models import Video
-import tempfile
-import os
 from moviepy.editor import VideoFileClip, concatenate_videoclips
-from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_audio
-import whisper
 import tempfile
 import os
-from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_audio
 import whisper
-from celery import shared_task
-from .tasks import transcribe_video
 
 # Create your views here.
 
 
 
 
-#views.py
 @api_view(['POST'])
 def create_video(request):
     video = Video.objects.create()
