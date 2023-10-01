@@ -8,8 +8,6 @@ from .models import Video
 from moviepy.editor import VideoFileClip, concatenate_videoclips
 import tempfile
 import os
-import whisper
-
 # Create your views here.
 
 
