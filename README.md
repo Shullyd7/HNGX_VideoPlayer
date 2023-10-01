@@ -1,88 +1,77 @@
-# Video Upload and Playback API
+# Video Management API
 
-The **Video Upload and Playback API** is a Django-based web application that allows users to upload video files and play them back through a web interface.
+The **Video Management API** is a Django application that allows you to create, append, and retrieve video files. You can use this API to create video records, append video chunks, and get the compiled video for a specific video ID.
 
-## Usage
+## Endpoints
 
-### Upload Video
+### Create Video (POST)
 
-To upload a video, make a POST request to the following endpoint:
-
-- Endpoint: `https://shully.pythonanywhere.com/api/upload/`
+- Create a new video record.
 - Method: POST
-- Request Body: Form data with the video file using the name 'upload'.
+- Endpoint: `https://video-player-ct0v.onrender.com/create_video/`
+- Response: JSON containing the created video ID.
 
-Example using `curl`:
-
+Example Request:
 ```bash
-curl -X POST -F "upload=@/path/to/your/video.mp4" https://shully.pythonanywhere.com/api/upload/
+curl -X POST https://video-player-ct0v.onrender.com/create_video/
 ```
 
-Response:
-
+Example Response:
 ```json
 {
-    "id": 3,
-    "upload": "/media/videos/file_example_MP4_480_1_5MG.mp4"
+    "video_id": 14
 }
 ```
 
-### Play Video
+### Append Video Chunk (POST)
 
-To play a previously uploaded video, visit the following URL in a web browser:
+- Append a video chunk to an existing video.
+- Method: POST
+- Endpoint: `https://video-player-ct0v.onrender.com/append_video/<video_id>/`
+- Request Body: Video chunk data in binary format.
+- Response: JSON with a success message.
 
-- URL: `https://shully.pythonanywhere.com/play/<int:video_id>/`
+For the first chunk:
+```json
+{
+    "message": "Video added successfully"
+}
+```
 
-Replace `<int:video_id>` with the actual video ID returned when you uploaded the video. This will render a video player, allowing you to play the video.
+For subsequent chunks:
+```json
+{
+    "message": "Video appended and joined successfully"
+}
+```
 
-## Installation
+### Get Video (GET)
 
-To set up this project locally, follow these steps:
+- Retrieve the compiled video for a specific video ID.
+- Method: GET
+- Endpoint: `https://video-player-ct0v.onrender.com/get_video/<video_id>/`
+- Response: Video file.
 
-1. Clone the repository to your local machine:
+Example Request:
+```bash
+curl https://video-player-ct0v.onrender.com/get_video/14/
+```
 
-   ```bash
-   git clone https://github.com/Shullyd7/HNGX_VideoPlayer.git
-   ```
+## Usage
 
-2. Navigate to the project directory:
+1. Create a new video record using the "Create Video" endpoint. Note the returned `video_id`.
 
-   ```bash
-   cd HNGX_VideoPlayer
-   ```
+2. Append video chunks to the video using the "Append Video Chunk" endpoint. Ensure you include the `video_id` in the URL.
 
-3. Create a virtual environment and activate it:
+3. Once all video chunks are appended, you can retrieve the compiled video using the "Get Video" endpoint with the `video_id`.
 
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-   ```
+## Deployment
 
-4. Install the project dependencies:
+The API has been deployed and can be accessed at the following base URL:
+- Base URL: `https://video-player-ct0v.onrender.com/`
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+## Known Limitations and Assumptions
 
-5. Apply database migrations:
-
-   ```bash
-   python manage.py migrate
-   ```
-
-6. Start the development server:
-
-   ```bash
-   python manage.py runserver
-   ```
-
-7. Access the API at `http://127.0.0.1:8000/api/upload/` for uploading videos and use the `/play/<int:video_id>/` endpoint for video playback.
-
-## Hosting
-
-The application is hosted on PythonAnywhere at `https://shully.pythonanywhere.com/`.
-
-## Requirements
-
-- Django==4.2.5
-- djangorestframework==3.14.0
+- This API does not implement authentication or authorization.
+- Video files are appended sequentially, so ensure you send the chunks in the correct order.
+- It takes time to append video chunks
